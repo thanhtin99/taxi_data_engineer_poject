@@ -10,6 +10,7 @@ The goal of the project is to create a pipeline to store, manage and analyze Ube
 ## Dataset Used
 TLC Trip Record Data
 Yellow and green taxi trip records include fields capturing pick-up and drop-off dates/times, pick-up and drop-off locations, trip distances, itemized fares, rate types, payment types, and driver-reported passenger counts. 
+
 Website - https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 
 ## Data model
@@ -24,13 +25,11 @@ Website - https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
 - Built all on Docker
 - Google Cloud Platform: Google Storage, Compute Instance, BigQuery, Looker Studio
 
-
 ## Result
 ### Data is ETL and fully stored in PostgreSQL, Minio, Google BigQuery
 ![image](https://github.com/user-attachments/assets/7689128b-f2b7-4232-b79a-bd46a3a8b470)
 
-![image](https://github.com/user-attachments/assets/11deb4c0-4fcb-4236-8575-1c66c39d5669)
-
+![image](https://github.com/user-attachments/assets/eaeafff3-ccf3-41f9-a89f-7ca620132d23)
 
 ### Access to Superset in http://localhost:8088/ to build visualization
 
