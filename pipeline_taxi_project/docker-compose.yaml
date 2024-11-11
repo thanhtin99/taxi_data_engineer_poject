@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  minio:
+    image: docker.io/bitnami/minio:latest
+    platform: linux/amd64
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - minionetwork
+    volumes:
+      - 'minio_data:/data'
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=123456789
+      - MINIO_DEFAULT_BUCKETS=buck
+
+  postgres:
+    image: debezium/example-postgres:1.9
+    platform: linux/amd64
+    container_name: postgres
+    ports:
+      - '5433:5432'
+    networks:
+      - minionetwork  # Thêm vào mạng để các service có thể giao tiếp
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  superset:
+    build:
+      context: ./superset
+      dockerfile: Dockerfile  # Đảm bảo Dockerfile có viết hoa chữ "D"
+    container_name: superset
+    environment:
+      - ADMIN_USERNAME=admin
+      - ADMIN_EMAIL=admin@superset.com
+      - ADMIN_PASSWORD=admin
+    ports:
+      - '8088:8088'
+    networks:
+      - minionetwork  # Thêm vào mạng để giao tiếp với các service khác
+
+  spark-master:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - '9090:8080'  # Spark Web UI
+      - '7077:7077'  # Spark Master Port
+    networks:
+      - minionetwork
+    volumes:
+      - './libs:/opt/spark/libs'  # Gắn kết thư mục libs từ máy chủ vào /opt/spark/libs trong container
+    environment:
+      - SPARK_JARS=/opt/spark/libs/hadoop-aws-3.3.4.jar,/opt/spark/libs/postgresql-42.2.20.jar,/opt/spark/libs/aws-java-sdk-bundle-1.12.260.jar
+
+  spark-worker:
+    image: bitnami/spark:latest
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    networks:
+      - minionetwork
+    volumes:
+      - './libs:/opt/spark/libs'  # Gắn kết thư mục libs từ máy chủ vào /opt/spark/libs trong container
+
+networks:
+  minionetwork:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
