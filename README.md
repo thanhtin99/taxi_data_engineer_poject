@@ -1,4 +1,4 @@
-# Taxi_data_engineer_poject
+# Taxi Data Insights
 ## Introduction
 Developed a data pipeline to process and analyze New York City taxi data, integrating various data sources and utilizing cloud storage solutions for efficient data management. Use Spark, Delta Lake, PostgreSQL, Docker và Apache Superset and GCP Storage.
 ## Architecture 
